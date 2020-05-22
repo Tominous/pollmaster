@@ -62,7 +62,7 @@ async def on_message(message):
         prefixes = (t.lower() for t in prefix)
         for pfx in prefixes:
             if len(pfx) >= 1 and message.content.lower().startswith(pfx.lower()):
-                # print("Matching", message.content, "with", pfx)
+                 print("Matching", message.content, "with", pfx)
                 message.content = pfx + message.content[len(pfx):]
                 await bot.process_commands(message)
                 break
@@ -86,18 +86,18 @@ async def on_ready():
         bot.emoji_dict = json.load(emojson)
 
     # # check discord server configs
-    # try:
-    #     db_server_ids = [entry['_id'] async for entry in bot.db.config.find({}, {})]
-    #     for server in bot.guilds:
-    #         if str(server.id) not in db_server_ids:
-    #             # create new config entry
-    #             await bot.db.config.update_one(
-    #                 {'_id': str(server.id)},
-    #                 {'$set': {'prefix': 'pm!', 'admin_role': 'polladmin', 'user_role': 'polluser'}},
-    #                 upsert=True
-    #             )
-    # except:
-    #     print("Problem verifying servers.")
+     try:
+         db_server_ids = [entry['_id'] async for entry in bot.db.config.find({}, {})]
+         for server in bot.guilds:
+             if str(server.id) not in db_server_ids:
+                 # create new config entry
+                 await bot.db.config.update_one(
+                     {'_id': str(server.id)},
+                     {'$set': {'prefix': 'pm!', 'admin_role': 'polladmin', 'user_role': 'polluser'}},
+                     upsert=True
+                 )
+     except:
+         print("Problem verifying servers.")
 
     # cache prefixes
     bot.pre = {entry['_id']: entry.get('prefix', 'pm!') async for entry in bot.db.config.find({}, {'_id', 'prefix'})}
@@ -129,7 +129,7 @@ async def on_command_error(ctx, e):
 
         if isinstance(e, ignored_exceptions):
             # log warnings
-            # logger.warning(f'{type(e).__name__}: {e}\n{"".join(traceback.format_tb(e.__traceback__))}')
+             logger.warning(f'{type(e).__name__}: {e}\n{"".join(traceback.format_tb(e.__traceback__))}')
             return
 
         # log error
